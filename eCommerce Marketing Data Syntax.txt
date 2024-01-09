@@ -1,0 +1,89 @@
+eCommerce Marketing Data
+
+
+//* Creating a table to import data from CSV file *//
+
+CREATE TABLE "marketing_trends"
+("ID" INT PRIMARY KEY,
+ "Date" DATE,
+ "Month" VARCHAR (4),
+ "Market" VARCHAR (30),
+ "Channel" VARCHAR (60),
+ "Source" VARCHAR (60),
+ "Campaign" VARCHAR (60),
+ "Visits" NUMERIC,
+ "Cost" NUMERIC,
+ "Conversions" NUMERIC,
+ "Revenue" NUMERIC,
+ "New Conversions" NUMERIC
+ );
+
+//* A summary of the total costs, total customer conversions and new customer conversions and revenue generate per marketing channel*//
+
+SELECT "Channel", SUM ("Cost") AS "total_cost", SUM("Conversions") AS "conversion", SUM("New Conversions") AS "new_conversion", SUM("Revenue") AS "total_revenue" 
+FROM "marketing_trends"
+GROUP BY "Channel"
+ORDER BY "Channel" ASC;
+
+//* A calculation of the Return on Ad Spend or ROAS *//
+
+SELECT "Channel",
+ROUND(100* SUM("Revenue")/SUM(NULLIF("Cost",0))) AS "ROAS %"
+FROM "marketing_trends"
+GROUP BY "Channel"
+ORDER BY "ROAS %" ASC;
+
+/*Answer: Performance Max: 821%, Paid Search - Generic: 582%, Paid Social: 299%, Paid Shopping: 176%, remaining channels gave a NULL value*/
+
+//* A calculation of the Click Per Point or CPP *//
+
+SELECT "Channel", 
+ROUND (SUM(NULLIF("Cost",0))/SUM("Conversions"),2) AS "CPP £"
+FROM "marketing_trends"
+GROUP BY "Channel"
+ORDER BY "CPP £" ASC;
+
+/*Answer: Performance Max: £17.80, Paid Search - Generic: £24.86, Paid Social: £29.43, Paid Shopping: £47.24, remaining channels gave a NULL value*/
+
+//* A calculation of the Customer Acquisition Costs or CAC*//
+SELECT "Channel", 
+ROUND (SUM(NULLIF("Cost",0))/SUM("New Conversions"),2) AS "CAC £"
+FROM "marketing_trends"
+GROUP BY "Channel"
+ORDER BY "CAC £" ASC;
+
+/*Answer: Paid Social: £35.93, Performance Max: £59.57, Paid Search - Generic: £82.99, Paid Shopping: £159.00, remaining channels gave a NULL value*/
+
+
+//* A calculation of the Average Value Order or AOV *//
+SELECT "Channel",
+ROUND(SUM("Revenue")/SUM("Conversions"),2) AS "AOV £"
+FROM "marketing_trends"
+GROUP BY "Channel"
+ORDER BY "AOV £" DESC;
+
+/*Answer: Display: £158.98, Performance Max: £146.10, Paid Search - Generic: £144.61, Affilitates: £119.38, Organic Search: 96.09, Email: £92.90, Direct: £91.75, Paid Social: £83.28, Social: £82.67, Other: £80.60, Referral: £68.23*/
+
+//* A calculation of the returning customers *//
+SELECT "Channel",
+ROUND(100* SUM("Conversions" - "New Conversions")/SUM("Conversions"),2) AS "Returning_conversions %"
+FROM "marketing_trends"
+GROUP BY "Channel"
+ORDER BY "Returning_conversions %" ASC;
+
+/*Answer: Paid Social: 18.09%, Other: 67.48%, Affilitates: 69.85%, Referral: 70%, Performance Max: 70.12%, Organic: 70.13%, Email: 70.13%, Direct: 70.2%, Paid Shopping: 70.29%, Social: 70.62%, Display: 70.72%*/
+
+//* A full display of requested KPIs (ROAS, CAC, CPP, AOV, Returning Customers, Revenue) *//
+
+SELECT "Channel", 
+ ROUND(100* SUM("Revenue")/SUM(NULLIF("Cost",0))) AS "ROAS %", 
+ ROUND (SUM(NULLIF("Cost",0))/SUM("Conversions"),2) AS "CPP £", 
+ ROUND (SUM(NULLIF("Cost",0))/SUM("New Conversions"),2) AS "CAC £",
+ ROUND(SUM("Revenue")/SUM("Conversions"),2) AS "AOV £", 
+ ROUND(100* SUM("Conversions" - "New Conversions")/SUM("Conversions"),2) AS "Returning_conversions %",
+ SUM("Revenue") AS "Revenue £"
+ FROM "marketing_trends"
+ GROUP BY "Channel"
+ ORDER BY "Channel" ASC;
+
+
