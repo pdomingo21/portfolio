@@ -18,7 +18,7 @@ CREATE TABLE "marketing_trends"
  "New Conversions" NUMERIC
  );
 
-//* A summary of the total costs, total customer conversions and new customer conversions and revenue generate per marketing channel*//
+//* A summary of the total costs, total customer conversions and new customer conversions and revenue generated per marketing channel*//
 
 SELECT "Channel", SUM ("Cost") AS "total_cost", SUM("Conversions") AS "conversion", SUM("New Conversions") AS "new_conversion", SUM("Revenue") AS "total_revenue" 
 FROM "marketing_trends"
